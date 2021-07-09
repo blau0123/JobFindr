@@ -7,21 +7,27 @@ app.config['DEBUG'] = True
 applications = [
     {
         'id': 0,
-        'state': 'interested',
+        'state': 'Interested',
         'company': 'Google',
         'position': 'Software Engineer'
     },
     {
         'id': 1,
-        'state': 'applied',
+        'state': 'Applied',
         'company': 'Apple',
         'position': 'Software Engineer'
     },
-        {
+    {
         'id': 2,
-        'state': 'interested',
+        'state': 'Interested',
         'company': 'Google',
         'position': 'AI/ML Engineer'
+    },
+    {
+        'id': 3,
+        'state': 'In progress',
+        'company': 'Facebook',
+        'position': 'R&D Engineer'
     }
 ]
 
@@ -41,5 +47,10 @@ def get_interested_apps():
 @app.route("/api/v1/applications/create", methods=['POST'])
 def create_app():
     data = request.form
+
+@app.route("/api/v1/applications/update", methods=['POST'])
+def update_app():
+    data = request.form
+    print(data)
 
 app.run()

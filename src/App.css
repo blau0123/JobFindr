@@ -1,11 +1,26 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #121212;
+}
+
 .card-holder {
   display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 100vh;
+  margin: 0 auto;
 }
 
 .container {
   display: flex;
   flex-direction: column;
   align-items: center;
+  color: white;
 }
 
 #card {

@@ -20,23 +20,32 @@ function App() {
           console.log(data)
           data.forEach(d => {
             if (d.state == 'interested')
-              // console.log(d)
               setIntData(oldData => [...oldData, d])
+            else if (d.state == 'in progress')
+              setProgData(oldData => [...oldData, d])
+            else if (d.state == 'applied')
+              setAppliedData(oldData => [...oldData, d])
+            else if (d.state == 'interviewing')
+              setInterviewData(oldData => [...oldData, d])
           }); 
         }))
-  });
+  }, []);
 
   return (
     <div className="App">
       <div className="card-holder">
         {
-          states.map(s => 
+          states.map((s, i) => 
             <div className='container'>
               {s}
               <div id='card' key={s}>
-                <Card data={
-                  s == 'Interested' && intData.length != 0 ? intData : null
-                }/>
+                <Card className='card-outer' id={i} data={
+                  s == 'Interested' && intData.length != 0 ? intData : 
+                  s == 'In Progress' && progData.length != 0 ? progData :
+                  s == 'Applied' && appliedData.length != 0 ? appliedData :
+                  s == 'Interviewing' && interviewData.length != 0 ? interviewData :
+                  null
+                } />
               </div> 
             </div> 
           )
