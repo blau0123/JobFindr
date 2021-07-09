@@ -6,9 +6,11 @@ function Tile(props) {
 
     const dragStart = e => {
         const target = e.target;
-        console.log(target.id)
+        console.log("ID of what you just picked up: ", target.id)
         // Set the tile_id of the tile that is being dragged to this tile since dragging has started
-        e.dataTransfer.setData('tile_id', target.id)
+        e.dataTransfer.setData('tile_id', target.id);
+        // Send the actual data for this application in the drag event (so when drop, can get the data to update)
+        e.dataTransfer.setData('tile_data', JSON.stringify(props.data));
         
         // Use setTimeout because without, when start dragging the tile, tile becomes invis
         setTimeout(() => {

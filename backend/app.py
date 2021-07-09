@@ -25,7 +25,7 @@ applications = [
     },
     {
         'id': 3,
-        'state': 'In progress',
+        'state': 'In Progress',
         'company': 'Facebook',
         'position': 'R&D Engineer'
     }
@@ -48,9 +48,13 @@ def get_interested_apps():
 def create_app():
     data = request.form
 
-@app.route("/api/v1/applications/update", methods=['POST'])
-def update_app():
-    data = request.form
+@app.route("/api/v1/applications/update/<id>", methods=['POST'])
+def update_app(id):
+    data = request.json
     print(data)
+    return jsonify({
+        'state': 'succ',
+        'app_id': id
+    })
 
 app.run()

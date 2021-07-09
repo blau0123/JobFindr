@@ -19,13 +19,13 @@ function App() {
           // Organize the data into the different states
           console.log(data)
           data.forEach(d => {
-            if (d.state == 'interested')
+            if (d.state == states[0])
               setIntData(oldData => [...oldData, d])
-            else if (d.state == 'in progress')
+            else if (d.state == states[1])
               setProgData(oldData => [...oldData, d])
-            else if (d.state == 'applied')
+            else if (d.state == states[2])
               setAppliedData(oldData => [...oldData, d])
-            else if (d.state == 'interviewing')
+            else if (d.state == states[3])
               setInterviewData(oldData => [...oldData, d])
           }); 
         }))
@@ -39,7 +39,7 @@ function App() {
             <div className='container'>
               {s}
               <div id='card' key={s}>
-                <Card className='card-outer' id={i} data={
+                <Card className='card-outer' id={'card-' + i} data={
                   s == 'Interested' && intData.length != 0 ? intData : 
                   s == 'In Progress' && progData.length != 0 ? progData :
                   s == 'Applied' && appliedData.length != 0 ? appliedData :
