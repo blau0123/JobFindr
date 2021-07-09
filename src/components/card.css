@@ -1,0 +1,14 @@
+.card-outer {
+    height: 500px;
+    width: 400px;
+    box-shadow: 2px 2px 4px #888888;
+    border-radius: 20px;
+}
+
+.all-tile-container {
+    width: 100%;
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

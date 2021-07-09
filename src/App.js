@@ -1,23 +1,46 @@
-import logo from './logo.svg';
+import React, {useEffect, useState} from 'react';
+import Card from './components/card.js';
+import Tile from './components/tile.js';
 import './App.css';
 
 function App() {
+  const [intData, setIntData] = useState(null);
+  const states = ['Interested', 'In Progress', 'Applied', 'Interviewing']
+
+  // Make the fetch call when this component first loads
+  useEffect(() => {
+    fetch("/api/v1/applications/interested").then(
+      response => response.json().then(
+        // data => console.log(data)
+        data => setIntData(data)
+      ))
+  });
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="card-holder">
+        {
+          states.map(s => 
+            <div className='container'>
+              {s}
+              <div id='card' key={s}>
+                <Card data={
+                  s == 'Interested' ? intData : null
+                }/>
+              </div> 
+            </div> 
+          )
+          /*
+          appsData != null ? appsData.map(data => 
+            <div id="card" key={data.id}>
+              <Card content={
+                <Tile company={data.company} position = {data.position} />
+              } />
+            </div>
+          ) : null
+          */
+        }
+      </div>
     </div>
   );
 }
