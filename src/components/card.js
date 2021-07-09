@@ -8,7 +8,7 @@ function Card(props) {
         <div className='card-outer'>
             {
                 // Render each position under their respective state as a tile
-                data != null ? data.map(d => 
+                data != null && data.length != 0 ? data.map(d => 
                     <div className='all-tile-container'>
                         <Tile data={d} />
                     </div>

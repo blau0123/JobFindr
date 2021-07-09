@@ -4,6 +4,15 @@
     border-radius: 20px;
 }
 
+.tile-container:hover {
+    cursor: pointer;
+}
+
 .tile-content {
     display: flex;
+    margin: 10px 20px;
+}
+
+.pos-text {
+    margin-left: 30px;
 }

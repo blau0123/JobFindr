@@ -7,7 +7,7 @@ function Tile(props) {
         <div className='tile-container'>
             <div className='tile-content'>
                 <h3>{company}</h3>
-                <p>{position}</p>
+                <p className='pos-text'>{position}</p>
             </div>
         </div>
     );

@@ -4,16 +4,26 @@ import Tile from './components/tile.js';
 import './App.css';
 
 function App() {
-  const [intData, setIntData] = useState(null);
+  const [intData, setIntData] = useState([]);
+  const [progData, setProgData] = useState([]);
+  const [appliedData, setAppliedData] = useState([]);
+  const [interviewData, setInterviewData] = useState([]);
   const states = ['Interested', 'In Progress', 'Applied', 'Interviewing']
 
   // Make the fetch call when this component first loads
   useEffect(() => {
-    fetch("/api/v1/applications/interested").then(
+    fetch("/api/v1/applications/all").then(
       response => response.json().then(
         // data => console.log(data)
-        data => setIntData(data)
-      ))
+        data => {
+          // Organize the data into the different states
+          console.log(data)
+          data.forEach(d => {
+            if (d.state == 'interested')
+              // console.log(d)
+              setIntData(oldData => [...oldData, d])
+          }); 
+        }))
   });
 
   return (
@@ -25,7 +35,7 @@ function App() {
               {s}
               <div id='card' key={s}>
                 <Card data={
-                  s == 'Interested' ? intData : null
+                  s == 'Interested' && intData.length != 0 ? intData : null
                 }/>
               </div> 
             </div> 
