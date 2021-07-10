@@ -1,0 +1,71 @@
+.modal-container {
+    /* Makes the background behind the modal content darker */
+    background-color: rgba(0,0,0,0.25);
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    /* z-index:1 makes the modal in front of all other content */
+    z-index: 1;
+    color: white;
+}
+
+.modal-content {
+    background-color: #4e4e4e;
+    position: absolute;
+    /* Center the modal content */
+    top: 20%;
+    left: 30%;
+
+    width: 40%;
+    padding: 20px;
+}
+
+.close-btn {
+    float: right;
+    top: 0px;
+}
+
+.close-btn:hover {
+    cursor: pointer;
+}
+
+.title {
+    text-align: center;
+}
+
+.label-input {
+    margin: 30px 20px;
+}
+
+.textbox {
+    float: right;
+    width: 60%;
+    padding: 10px;
+    background-color: #cecece;
+    color: black;
+    border: none;
+    outline: none;
+}
+
+.dropdown {
+    float: right;
+    width: 60%;
+    padding: 10px;
+    background-color: #cecece;
+}
+
+.add-btn-container {
+    width: 100%;
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+}
+
+.add-btn {
+    width: 30%;
+    padding: 10px;
+}
+
+.add-btn:hover {
+    cursor: pointer;
+}

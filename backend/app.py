@@ -96,15 +96,6 @@ def get_all_apps():
 
     return jsonify(all_apps)
 
-@app.route("/api/v1/applications/interested", methods=['GET'])
-def get_interested_apps():
-    int_apps = []
-    # Filter through the applications list to find only interested apps
-    for a in applications:
-        if a['state'] == 'interested':
-            int_apps.append(a)
-    return jsonify(int_apps)
-
 @app.route("/api/v1/applications/create", methods=['POST'])
 def create_app():
     print("CREATING NEW APPLICATION")

@@ -8,6 +8,7 @@ function App() {
   const [newState, setNewState] = useState('Interested');
   const [newCompany, setNewCompany] = useState('Facebook');
   const [newPosition, setNewPosition] = useState('Fucker');
+  const [popupOpen, setPopupOpen] = useState(false);
 
   const [intData, setIntData] = useState([]);
   const [progData, setProgData] = useState([]);
@@ -36,6 +37,10 @@ function App() {
         }))
   }, []);
 
+  const togglePopup = () => {
+    setPopupOpen(!popupOpen);
+  }
+
   const createNewApp = () => {
     // Should open a popup so that the user can input data
 
@@ -58,7 +63,10 @@ function App() {
 
   return (
     <div className="App">
-      <button onClick={createNewApp}>+</button>
+      <button onClick={togglePopup}>+</button>
+      {
+        popupOpen ? <Popup open={togglePopup} stateOptions={states} /> : null
+      }
       <div className="card-holder">
         {
           states.map((s, i) => 
