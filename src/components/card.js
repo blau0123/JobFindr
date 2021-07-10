@@ -44,8 +44,6 @@ function Card(props) {
         e.preventDefault();
     }
 
-    console.log(data);
-
     return (
         <div 
             // card-outer

@@ -44,6 +44,23 @@ function App() {
     setPopupOpen(!popupOpen);
   }
 
+  const addDateToState = (addToState, newData) => {
+    switch(addToState) {
+      case "Interested":
+        setIntData([...intData, newData]);
+        break;
+      case "In Progress":
+        setProgData([...progData, newData]);
+        break;
+      case "Applied":
+        setAppliedData([...appliedData, newData]);
+        break;
+      case "Interviewing":
+        setInterviewData([...interviewData, newData]);
+        break;
+    }
+  }
+
   // Add the newly dragged tile to the data for the state it was dragged into, and
   // remove it for the state that it was dragged from (to avoid dupes)
   const updateData = (newState, oldState, newData) => {
@@ -83,6 +100,9 @@ function App() {
   }
 
   const createNewApp = newAppObj => {
+    // Add new object to the state, so can update it without a refresh
+    addDateToState(newAppObj.state, newAppObj);
+
     // Create the new application in the database
     fetch('/api/v1/applications/create', {
       method: 'POST',
