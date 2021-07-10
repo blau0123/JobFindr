@@ -5,9 +5,6 @@ import Popup from './components/popup.js';
 import './App.css';
 
 function App() {
-  const [newState, setNewState] = useState('Interested');
-  const [newCompany, setNewCompany] = useState('Facebook');
-  const [newPosition, setNewPosition] = useState('Fucker');
   const [popupOpen, setPopupOpen] = useState(false);
 
   const [intData, setIntData] = useState([]);
@@ -41,16 +38,7 @@ function App() {
     setPopupOpen(!popupOpen);
   }
 
-  const createNewApp = () => {
-    // Should open a popup so that the user can input data
-
-    // Create the object representing the new app
-    const newAppObj = {
-      'state': newState,
-      'company': newCompany,
-      'position': newPosition
-    };
-
+  const createNewApp = newAppObj => {
     // Create the new application in the database
     fetch('/api/v1/applications/create', {
       method: 'POST',
@@ -65,7 +53,7 @@ function App() {
     <div className="App">
       <button onClick={togglePopup}>+</button>
       {
-        popupOpen ? <Popup open={togglePopup} stateOptions={states} /> : null
+        popupOpen ? <Popup open={togglePopup} stateOptions={states} createNewApp={createNewApp} /> : null
       }
       <div className="card-holder">
         {

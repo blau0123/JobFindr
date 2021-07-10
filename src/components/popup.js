@@ -4,8 +4,8 @@ import './popup.css';
 function Popup(props) {
     const [companyText, setCompanyText] = useState('');
     const [positionText, setPositionText] = useState('');
-    const [state, setState] = useState('');
-    const {open, stateOptions} = props;
+    const [state, setState] = useState('Interested');
+    const {open, createNewApp, stateOptions} = props;
 
     const handleClick = e => {
         // props.open is the function that toggles whether the modal is open or not
@@ -15,7 +15,15 @@ function Popup(props) {
     const handleSubmit = e => {
         e.preventDefault();
 
-        console.log(companyText, positionText, state);
+        // Create the object representing the new app
+        const newAppObj = {
+            'state': state,
+            'company': companyText,
+            'position': positionText
+        };
+        console.log(newAppObj);
+        createNewApp(newAppObj);
+
         // Close the popup after submit
         open();
     }
