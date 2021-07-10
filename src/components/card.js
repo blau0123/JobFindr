@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Tile from './tile.js';
-import Popup from './add-popup.js';
+import Popup from './popup.js';
 import './card.css';
 
 function Card(props) {
@@ -44,20 +44,22 @@ function Card(props) {
             {
                 // Render each position under their respective state as a tile
                 data != null && data.length != 0 ? data.map((d, i) => 
-                    <Tile className='tile-container' id={'tile-' + d.id} data={d} draggable='true'>
+                    <div className='non-drag-container'>
                         {
                             editPopupOpen && d.id === appInPopupID ? 
                                 <Popup open={toggleEditPopup} stateOptions={states} 
                                     createNewApp={createNewApp} updateData={updateData} 
                                     prevAppObj={d} draggable='false' /> : null
                         }
-                        <div className='tile-content' onClick={() => toggleEditPopup(d.id)}>
-                            <div className='tile-company' style={{backgroundColor:statesColors[stateIndx]}}>
-                                <p>{d.company}</p>
+                        <Tile className='tile-container' id={'tile-' + d.id} data={d} draggable='true'>
+                            <div className='tile-content' onClick={() => toggleEditPopup(d.id)}>
+                                <div className='tile-company' style={{backgroundColor:statesColors[stateIndx]}}>
+                                    <p>{d.company}</p>
+                                </div>
+                                <p className='pos-text'>{d.position}</p>
                             </div>
-                            <p className='pos-text'>{d.position}</p>
-                        </div>
-                    </Tile>
+                        </Tile>
+                    </div>
                 ) : null
             }
         </div>

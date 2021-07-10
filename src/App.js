@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Card from './components/card.js';
 import Tile from './components/tile.js';
-import Popup from './components/add-popup.js';
+import Popup from './components/popup.js';
 import './App.css';
 
 function App() {
