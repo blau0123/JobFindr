@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Tile from './tile.js';
 import './card.css';
 
 function Card(props) {
-    const {size, data} = props;
-    const states = ['Interested', 'In Progress', 'Applied', 'Interviewing'];
+    const {size, states, statesColors, stateIndx, data} = props;
+    const {updateData} = props;
 
     // Function to be called when dropping into the card
     const drop = e => {
@@ -14,13 +14,17 @@ function Card(props) {
         tile.style.display = 'block';
 
         // e.target is the card/board you want to drop the tile into
-        e.target.appendChild(tile);
+        // e.target.appendChild(tile);
 
         // Make a POST request to update the data with its new position
         // Get the new state that the tile is in. ID of the card (e.target.id) will be card-id#
         const tileNewState = states[e.target.id.split('-')[1]];
-        // Get the old data for tile that was just moved (was set in tile.js) and update it
+
+        // Add this new dragged tile data to the card's data then update it
         const applicData = JSON.parse(e.dataTransfer.getData('tile_data'));
+        updateData(tileNewState, applicData.state, applicData);
+
+        // Get the old data for tile that was just moved (was set in tile.js) and update it
         applicData.state = tileNewState;
 
         fetch('/api/v1/applications/update/' + tile_id.split('-')[1], {
@@ -39,6 +43,9 @@ function Card(props) {
     const dragOver = e => {
         e.preventDefault();
     }
+
+    console.log(data);
+
     return (
         <div 
             // card-outer
@@ -53,7 +60,9 @@ function Card(props) {
                     //<div className='all-tile-container'>
                         <Tile className='tile-container' id={'tile-' + d.id} data={d} draggable='true'>
                             <div className='tile-content'>
-                                <h3>{d.company}</h3>
+                                <div className='tile-company' style={{backgroundColor:statesColors[stateIndx]}}>
+                                    <p>{d.company}</p>
+                                </div>
                                 <p className='pos-text'>{d.position}</p>
                             </div>
                         </Tile>
