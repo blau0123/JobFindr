@@ -4,6 +4,10 @@ import Tile from './components/tile.js';
 import './App.css';
 
 function App() {
+  const [newState, setNewState] = useState('Interested');
+  const [newCompany, setNewCompany] = useState('Facebook');
+  const [newPosition, setNewPosition] = useState('Fucker');
+
   const [intData, setIntData] = useState([]);
   const [progData, setProgData] = useState([]);
   const [appliedData, setAppliedData] = useState([]);
@@ -31,8 +35,27 @@ function App() {
         }))
   }, []);
 
+  const createNewApp = () => {
+    // Create the object representing the new app
+    const newAppObj = {
+      'state': newState,
+      'company': newCompany,
+      'position': newPosition
+    };
+
+    // Create the new application in the database
+    fetch('/api/v1/applications/create', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(newAppObj)
+    })
+  }
+
   return (
     <div className="App">
+      <button onClick={createNewApp}>+</button>
       <div className="card-holder">
         {
           states.map((s, i) => 
@@ -49,15 +72,6 @@ function App() {
               </div> 
             </div> 
           )
-          /*
-          appsData != null ? appsData.map(data => 
-            <div id="card" key={data.id}>
-              <Card content={
-                <Tile company={data.company} position = {data.position} />
-              } />
-            </div>
-          ) : null
-          */
         }
       </div>
     </div>

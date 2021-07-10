@@ -1,8 +1,65 @@
 import flask
+from db import DB_NAME, DB_USER, DB_PASS, DB_HOST, DB_PORT
+import psycopg2
 from flask import jsonify, request
 
+# POSTGRES DATABASE
+def db_setup():
+    try:
+        conn = psycopg2.connect(database=DB_NAME, user=DB_USER, 
+            password=DB_PASS, host=DB_HOST, port=DB_PORT)
+        print("Database connected")
+    except:
+        print("Database not connected successfully")
+
+    # Create the Application table to store all applications. If already exists, then don't
+    # do anything on server start
+    cur = conn.cursor()
+    cur.execute("""
+
+    CREATE TABLE IF NOT EXISTS Application
+    (
+        ID SERIAL PRIMARY KEY,
+        STATE TEXT NOT NULL,
+        COMPANY TEXT NOT NULL,
+        POSITION TEXT NOT NULL
+    )
+
+    """)
+    conn.commit()
+    print("Application table created successfully")
+    cur.close()
+    conn.close()
+    print("Database successfully closed")
+
+def create_dummy_data():
+    insert_sql = """
+        INSERT INTO Application (STATE, COMPANY, POSITION)
+        VALUES(%s, %s, %s) RETURNING ID AS app_id;
+    """
+    try:
+        conn = psycopg2.connect(database=DB_NAME, user=DB_USER, 
+            password=DB_PASS, host=DB_HOST, port=DB_PORT)
+        print("Database connected")
+    except:
+        print("Database not connected successfully")
+    
+    cur = conn.cursor()
+    cur.execute(insert_sql, ("Interested", "Google", "Bitch"))
+    # Get the generated id back for this application
+    app_id = cur.fetchone()[0]
+    print("New data inserted successfully with id: ", app_id)
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+
+# SET UP THE FLASK SERVER AND POSTGRESQL DB
 app = flask.Flask(__name__)
 app.config['DEBUG'] = True
+db_setup()
+# create_dummy_data()
 
 applications = [
     {
@@ -33,6 +90,7 @@ applications = [
 
 @app.route("/api/v1/applications/all", methods=['GET'])
 def get_all_apps():
+    # Get all applications from the database
     return jsonify(applications)
 
 @app.route("/api/v1/applications/interested", methods=['GET'])
@@ -46,12 +104,61 @@ def get_interested_apps():
 
 @app.route("/api/v1/applications/create", methods=['POST'])
 def create_app():
-    data = request.form
+    print("CREATING NEW APPLICATION")
+    new_app_data = request.json
+    print(new_app_data)
+    insert_sql = """
+        INSERT INTO Application (STATE, COMPANY, POSITION)
+        VALUES(%s, %s, %s) RETURNING ID AS app_id;
+    """
+    try:
+        conn = psycopg2.connect(database=DB_NAME, user=DB_USER, 
+            password=DB_PASS, host=DB_HOST, port=DB_PORT)
+        print("Database connected")
+    except:
+        print("Database not connected successfully")
+    
+    cur = conn.cursor()
+    cur.execute(insert_sql, (new_app_data['state'], new_app_data['company'], new_app_data['position']))
+    # Get the generated id back for this application
+    app_id = cur.fetchone()[0]
+    print("New data inserted successfully with id: ", app_id)
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return jsonify({
+        'state': 'succ',
+        'app_id': app_id
+    })
 
 @app.route("/api/v1/applications/update/<id>", methods=['POST'])
 def update_app(id):
-    data = request.json
-    print(data)
+    print("UPDATING NEW APPLICATION WITH ID: ", id)
+    app_data = request.json
+    update_sql = """
+        UPDATE Application
+        SET STATE = %s,
+            COMPANY = %s,
+            POSITION = %s
+        WHERE ID = %s
+    """
+    try:
+        conn = psycopg2.connect(database=DB_NAME, user=DB_USER, 
+            password=DB_PASS, host=DB_HOST, port=DB_PORT)
+        print("Database connected")
+    except:
+        print("Database not connected successfully")
+
+    cur = conn.cursor()
+    cur.execute(update_sql, (app_data['state'], app_data['company'], app_data['position'], id))
+    print("APPLICATION WITH ID, ", id, ", SUCCESSFULLY UPDATED")
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
     return jsonify({
         'state': 'succ',
         'app_id': id
