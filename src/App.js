@@ -1,11 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import Card from './components/card.js';
 import Tile from './components/tile.js';
-import Popup from './components/popup.js';
+import Popup from './components/add-popup.js';
 import './App.css';
 
 function App() {
   const [popupOpen, setPopupOpen] = useState(false);
+  const [editPopupOpen, setEditPopupOpen] = useState(false);
+  const [appInPopupID, setPopupID] = useState(-1);
 
   const [intData, setIntData] = useState([]);
   const [progData, setProgData] = useState([]);
@@ -44,6 +46,13 @@ function App() {
     setPopupOpen(!popupOpen);
   }
 
+  const toggleEditPopup = appID => {
+    console.log("opening")
+    // If closing, set the ID of the app to be shown in the popup = -1
+    setPopupID(appID);
+    setEditPopupOpen(!editPopupOpen);
+  }
+
   const addDateToState = (addToState, newData) => {
     switch(addToState) {
       case "Interested":
@@ -63,38 +72,57 @@ function App() {
 
   // Add the newly dragged tile to the data for the state it was dragged into, and
   // remove it for the state that it was dragged from (to avoid dupes)
-  const updateData = (newState, oldState, newData) => {
-    removeEltFromState(oldState, newData);
+  const updateData = (newState, oldState, appID, newData) => {
+    console.log("updating data", newData);
+    removeEltFromState(oldState, appID);
+    let removedList = []
 
     switch(newState) {
       case "Interested":
-        setIntData([...intData, newData]);
+        removedList = intData.filter(item => item.id != appID)
+        setIntData([...removedList, newData]);
         break;
       case "In Progress":
-        setProgData([...progData, newData]);
+        removedList = progData.filter(item => item.id != appID)
+        setProgData([...removedList, newData]);
         break;
       case "Applied":
-        setAppliedData([...appliedData, newData]);
+        removedList = appliedData.filter(item => item.id != appID)
+        setAppliedData([...removedList, newData]);
         break;
       case "Interviewing":
-        setInterviewData([...interviewData, newData]);
+        removedList = interviewData.filter(item => item.id != appID)
+        setInterviewData([...removedList, newData]);
         break;
     }
+
+    // Update the database data for the updated application
+    fetch('/api/v1/applications/update/' + appID, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(newData)
+    }).then(
+        response => response.json().then(
+            data => console.log("UPDATED DATA: ", data)
+        )
+    );
   }
 
-  const removeEltFromState = (stateToRemoveFrom, dataToRemove) => {
+  const removeEltFromState = (stateToRemoveFrom, dataToRemoveID) => {
     switch(stateToRemoveFrom) {
       case "Interested":
-        setIntData(intData.filter(item => item.id != dataToRemove.id));
+        setIntData(intData.filter(item => item.id != dataToRemoveID));
         break;
       case "In Progress":
-        setProgData(progData.filter(item => item.id != dataToRemove.id));
+        setProgData(progData.filter(item => item.id != dataToRemoveID));
         break;
       case "Applied":
-        setAppliedData(appliedData.filter(item => item.id != dataToRemove.id));
+        setAppliedData(appliedData.filter(item => item.id != dataToRemoveID));
         break;
       case "Interviewing":
-        setInterviewData(interviewData.filter(item => item.id != dataToRemove.id));
+        setInterviewData(interviewData.filter(item => item.id != dataToRemoveID));
         break;
     }
   }
@@ -115,9 +143,11 @@ function App() {
 
   return (
     <div className="App">
-      <button onClick={togglePopup}>+</button>
+      <button id='add-popup' onClick={togglePopup}>+</button>
       {
-        popupOpen ? <Popup open={togglePopup} stateOptions={states} createNewApp={createNewApp} /> : null
+        popupOpen ? <Popup open={togglePopup} stateOptions={states} createNewApp={createNewApp}
+                      updateData={updateData} prevAppObj={{'company':'', 'position':'', 'state':'Interested'}}
+                      /> : null
       }
       <div className="card-holder">
         {
@@ -129,7 +159,11 @@ function App() {
                   states={states}
                   statesColors={statesColors}
                   stateIndx={i}
+                  editPopupOpen={editPopupOpen}
+                  toggleEditPopup={toggleEditPopup}
+                  createNewApp={createNewApp}
                   updateData={updateData}
+                  appInPopupID={appInPopupID}
                   data={
                     s == 'Interested' && intData.length != 0 ? intData : 
                     s == 'In Progress' && progData.length != 0 ? progData :

@@ -2,6 +2,10 @@
     /* Makes the background behind the modal content darker */
     background-color: rgba(0,0,0,0.25);
     position: fixed;
+    /* Force the modal to start at the top left, so that it doesn't appear wherever was clicked */
+    top: 0;
+    left: 0;
+    
     width: 100%;
     height: 100%;
     /* z-index:1 makes the modal in front of all other content */

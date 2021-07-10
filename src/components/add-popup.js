@@ -2,10 +2,10 @@ import React, {useState} from 'react';
 import './popup.css';
 
 function Popup(props) {
-    const [companyText, setCompanyText] = useState('');
-    const [positionText, setPositionText] = useState('');
-    const [state, setState] = useState('Interested');
-    const {open, createNewApp, stateOptions} = props;
+    const {open, createNewApp, updateData, prevAppObj, stateOptions} = props;
+    const [companyText, setCompanyText] = useState(prevAppObj.company);
+    const [positionText, setPositionText] = useState(prevAppObj.position);
+    const [state, setState] = useState(prevAppObj.state);
 
     const handleClick = e => {
         // props.open is the function that toggles whether the modal is open or not
@@ -21,8 +21,15 @@ function Popup(props) {
             'company': companyText,
             'position': positionText
         };
-        console.log(newAppObj);
-        createNewApp(newAppObj);
+
+        // If previous text is empty, then we are creating a new app
+        if (prevAppObj.company === '')
+            createNewApp(newAppObj);
+        // Else, we are editing a previously created app (that already has an ID)
+        else {
+            newAppObj['id'] = prevAppObj.id;
+            updateData(prevAppObj.state, newAppObj.state, prevAppObj.id, newAppObj);
+        }
 
         // Close the popup after submit
         open();

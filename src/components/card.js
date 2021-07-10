@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import Tile from './tile.js';
+import Popup from './add-popup.js';
 import './card.css';
 
 function Card(props) {
-    const {size, states, statesColors, stateIndx, data} = props;
-    const {updateData} = props;
+    const {size, states, statesColors, stateIndx, data, editPopupOpen, appInPopupID} = props;
+    const {updateData, createNewApp, toggleEditPopup} = props;
 
     // Function to be called when dropping into the card
     const drop = e => {
@@ -22,22 +23,10 @@ function Card(props) {
 
         // Add this new dragged tile data to the card's data then update it
         const applicData = JSON.parse(e.dataTransfer.getData('tile_data'));
-        updateData(tileNewState, applicData.state, applicData);
-
+        const oldState = applicData.state;
         // Get the old data for tile that was just moved (was set in tile.js) and update it
         applicData.state = tileNewState;
-
-        fetch('/api/v1/applications/update/' + tile_id.split('-')[1], {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(applicData)
-        }).then(
-            response => response.json().then(
-                data => console.log(data)
-            )
-        );
+        updateData(tileNewState, oldState, tile_id.split('-')[1], applicData);
     }
 
     const dragOver = e => {
@@ -55,16 +44,20 @@ function Card(props) {
             {
                 // Render each position under their respective state as a tile
                 data != null && data.length != 0 ? data.map((d, i) => 
-                    //<div className='all-tile-container'>
-                        <Tile className='tile-container' id={'tile-' + d.id} data={d} draggable='true'>
-                            <div className='tile-content'>
-                                <div className='tile-company' style={{backgroundColor:statesColors[stateIndx]}}>
-                                    <p>{d.company}</p>
-                                </div>
-                                <p className='pos-text'>{d.position}</p>
+                    <Tile className='tile-container' id={'tile-' + d.id} data={d} draggable='true'>
+                        {
+                            editPopupOpen && d.id === appInPopupID ? 
+                                <Popup open={toggleEditPopup} stateOptions={states} 
+                                    createNewApp={createNewApp} updateData={updateData} 
+                                    prevAppObj={d} draggable='false' /> : null
+                        }
+                        <div className='tile-content' onClick={() => toggleEditPopup(d.id)}>
+                            <div className='tile-company' style={{backgroundColor:statesColors[stateIndx]}}>
+                                <p>{d.company}</p>
                             </div>
-                        </Tile>
-                    //</div>
+                            <p className='pos-text'>{d.position}</p>
+                        </div>
+                    </Tile>
                 ) : null
             }
         </div>
