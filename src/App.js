@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Card from './components/card.js';
 import Tile from './components/tile.js';
+import Popup from './components/popup.js';
 import './App.css';
 
 function App() {
@@ -36,6 +37,8 @@ function App() {
   }, []);
 
   const createNewApp = () => {
+    // Should open a popup so that the user can input data
+
     // Create the object representing the new app
     const newAppObj = {
       'state': newState,

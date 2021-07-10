@@ -61,37 +61,40 @@ app.config['DEBUG'] = True
 db_setup()
 # create_dummy_data()
 
-applications = [
-    {
-        'id': 0,
-        'state': 'Interested',
-        'company': 'Google',
-        'position': 'Software Engineer'
-    },
-    {
-        'id': 1,
-        'state': 'Applied',
-        'company': 'Apple',
-        'position': 'Software Engineer'
-    },
-    {
-        'id': 2,
-        'state': 'Interested',
-        'company': 'Google',
-        'position': 'AI/ML Engineer'
-    },
-    {
-        'id': 3,
-        'state': 'In Progress',
-        'company': 'Facebook',
-        'position': 'R&D Engineer'
-    }
-]
-
 @app.route("/api/v1/applications/all", methods=['GET'])
 def get_all_apps():
     # Get all applications from the database
-    return jsonify(applications)
+    print("GETTING ALL APPLICATIONS")
+    query_all_sql = """
+        SELECT ID, STATE, COMPANY, POSITION 
+        FROM Application
+    """
+    try:
+        conn = psycopg2.connect(database=DB_NAME, user=DB_USER, 
+            password=DB_PASS, host=DB_HOST, port=DB_PORT)
+        print("Database connected")
+    except:
+        print("Database not connected successfully")
+    
+    cur = conn.cursor()
+    cur.execute(query_all_sql)
+
+    # Fetch the data from the database
+    rows = cur.fetchall()
+    all_apps = []
+    for data in rows:
+        curr_app = {
+            'id': data[0],
+            'state': data[1],
+            'company': data[2],
+            'position': data[3]
+        }
+        all_apps.append(curr_app)
+
+    cur.close()
+    conn.close()
+
+    return jsonify(all_apps)
 
 @app.route("/api/v1/applications/interested", methods=['GET'])
 def get_interested_apps():
