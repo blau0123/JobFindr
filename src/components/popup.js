@@ -6,6 +6,7 @@ function Popup(props) {
     const [companyText, setCompanyText] = useState(prevAppObj.company);
     const [positionText, setPositionText] = useState(prevAppObj.position);
     const [state, setState] = useState(prevAppObj.state);
+    const [showErrorMsg, setShowErrorMsg] = useState(false);
 
     const handleClick = e => {
         // props.open is the function that toggles whether the modal is open or not
@@ -22,9 +23,16 @@ function Popup(props) {
             'position': positionText
         };
 
-        // If previous text is empty, then we are creating a new app
-        if (prevAppObj.company === '')
+        // Make sure everything is filled in and not empty first
+        if (companyText.replace(/\s/g, '') === '' || positionText.replace(/\s/g, '') === '') {
+            toggleErrorMessage(true);
+            return;
+        }
+
+        // If previous id is empty, then we are creating a new app
+        if (prevAppObj.id === undefined) {
             createNewApp(newAppObj);
+        }
         // Else, we are editing a previously created app (that already has an ID)
         else {
             newAppObj['id'] = prevAppObj.id;
@@ -46,6 +54,10 @@ function Popup(props) {
             setState(e.target.value);
     }
 
+    const toggleErrorMessage = evt => {
+        setShowErrorMsg(!showErrorMsg);
+      }
+
     return(
         <div className='modal-container'>
             <div className='modal-content'>
@@ -54,17 +66,17 @@ function Popup(props) {
                 <h3 className='title'>Add a new application</h3>
                 <div className='form'>
                     <div className='label-input'>
-                        <label for='company-box'>Company</label>
+                        <label for='company-box'>Company *</label>
                         <input id='company-box' className='textbox' type='text' 
                             value={companyText} onChange={handleChange} /><br/>
                     </div>
                     <div className='label-input'>
-                        <label for='position-box'>Position</label>
+                        <label for='position-box'>Position *</label>
                         <input id='position-box' className='textbox' type='text'
                             value={positionText} onChange={handleChange} />
                     </div>
                     <div className='label-input'>
-                        <label for='state-box'>State</label>
+                        <label for='state-box'>State *</label>
                         <select id='state-box' className='dropdown' value={state} onChange={handleChange}>
                             {
                                 // Go through each state and make it an option
@@ -73,6 +85,11 @@ function Popup(props) {
                                 ) : null
                             }
                         </select>
+                    </div>
+                    <div className='error-msg-container'>
+                        {
+                            showErrorMsg ? <p>Error: make sure all fields are complete</p> : null
+                        }
                     </div>
                     <div className='add-btn-container'>
                         <button className='add-btn' onClick={handleSubmit}>Add</button>
