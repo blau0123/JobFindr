@@ -9,7 +9,7 @@ function Popup(props) {
 
     const handleClick = e => {
         // props.open is the function that toggles whether the modal is open or not
-        open();
+        open(e);
     }
 
     const handleSubmit = e => {
@@ -32,7 +32,7 @@ function Popup(props) {
         }
 
         // Close the popup after submit
-        open();
+        open(e);
     }
 
     const handleChange = e => {

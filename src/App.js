@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import Card from './components/card.js';
-import Tile from './components/tile.js';
+import NavBar from './components/navbar.js';
 import Popup from './components/popup.js';
 import './App.css';
 
@@ -8,6 +8,8 @@ function App() {
   const [popupOpen, setPopupOpen] = useState(false);
   const [editPopupOpen, setEditPopupOpen] = useState(false);
   const [appInPopupID, setPopupID] = useState(-1);
+
+  const [stateToAddTo, setStateToAddTo] = useState('Interested');
 
   const [intData, setIntData] = useState([]);
   const [progData, setProgData] = useState([]);
@@ -42,7 +44,9 @@ function App() {
         }))
   }, []);
 
-  const togglePopup = () => {
+  const togglePopup = evt => {
+    console.log(evt.target)
+    setStateToAddTo(evt.target.id);
     setPopupOpen(!popupOpen);
   }
 
@@ -143,17 +147,30 @@ function App() {
 
   return (
     <div className="App">
-      <button id='add-popup' onClick={togglePopup}>+</button>
-      {
-        popupOpen ? <Popup open={togglePopup} stateOptions={states} createNewApp={createNewApp}
-                      updateData={updateData} prevAppObj={{'company':'', 'position':'', 'state':'Interested'}}
-                      /> : null
-      }
+      <NavBar />
+      <div className='home-title-container'>
+        <p className='home-title'>JobFindr</p>
+        <p className='home-desc'>Easily keep track of your job search.</p>
+      </div>
       <div className="card-holder">
         {
           states.map((s, i) => 
             <div className='container'>
-              {s}
+              <div className='card-text'>
+                {s + ' (' +
+                  (s === 'Interested' ? intData.length :
+                  s === 'In Progress' ? progData.length :
+                  s === 'Applied' ? appliedData.length :
+                  s === 'Interviewing' ? interviewData.length : 0)
+                }
+                {')'}
+                <button className='add-popup' id={s} onClick={togglePopup}>+</button>
+                {
+                  popupOpen ? <Popup open={togglePopup} stateOptions={states} createNewApp={createNewApp}
+                                updateData={updateData} prevAppObj={{'company':'', 'position':'', 'state':stateToAddTo}}
+                                /> : null
+                }
+              </div>
               <div id='card' key={s}>
                 <Card className='card-outer' id={'card-' + i} 
                   states={states}

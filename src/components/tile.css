@@ -2,8 +2,9 @@
     width: 90%;
     /*box-shadow: 2px 2px 4px #888888;*/
     border-radius: 5px;
-    background-color: #4e4e4e;
+    background-color: hsl(0, 0%, 31%);
     margin-top: 15px;
+    overflow: hidden;
 }
 
 .tile-container:hover {
