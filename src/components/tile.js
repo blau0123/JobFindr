@@ -2,8 +2,7 @@ import React from 'react';
 import './tile.css';
 
 function Tile(props) {
-    const {company, position} = props.data;
-
+    // Defines what to do when we start dragging a tile, including storing data about this tile
     const dragStart = e => {
         const target = e.target;
         console.log("ID of what you just picked up: ", target.id)

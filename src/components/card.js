@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Tile from './tile.js';
 import Popup from './popup.js';
 import './card.css';
 
 function Card(props) {
-    const {size, states, statesColors, stateIndx, data, editPopupOpen, appInPopupID} = props;
+    const {states, statesColors, stateIndx, data, editPopupOpen, appInPopupID} = props;
     const {updateData, createNewApp, toggleEditPopup} = props;
 
     // Function to be called when dropping into the card
@@ -43,8 +43,8 @@ function Card(props) {
         >
             {
                 // Render each position under their respective state as a tile
-                data != null && data.length != 0 ? data.map((d, i) => 
-                    <div className='non-drag-container'>
+                data !== null && data.length !== 0 ? data.map((d, i) => 
+                    <div key={i} className='non-drag-container'>
                         {
                             editPopupOpen && d.id === appInPopupID ? 
                                 <Popup open={toggleEditPopup} stateOptions={states} 

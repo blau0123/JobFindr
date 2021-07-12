@@ -22,7 +22,8 @@ def db_setup():
         ID SERIAL PRIMARY KEY,
         STATE TEXT NOT NULL,
         COMPANY TEXT NOT NULL,
-        POSITION TEXT NOT NULL
+        POSITION TEXT NOT NULL,
+        NOTES TEXT
     )
 
     """)
@@ -34,8 +35,8 @@ def db_setup():
 
 def create_dummy_data():
     insert_sql = """
-        INSERT INTO Application (STATE, COMPANY, POSITION)
-        VALUES(%s, %s, %s) RETURNING ID AS app_id;
+        INSERT INTO Application (STATE, COMPANY, POSITION, NOTES)
+        VALUES(%s, %s, %s, %s) RETURNING ID AS app_id;
     """
     try:
         conn = psycopg2.connect(database=DB_NAME, user=DB_USER, 
@@ -45,7 +46,7 @@ def create_dummy_data():
         print("Database not connected successfully")
     
     cur = conn.cursor()
-    cur.execute(insert_sql, ("Interested", "Google", "Bitch"))
+    cur.execute(insert_sql, ("Interested", "Google", "Bitch", ""))
     # Get the generated id back for this application
     app_id = cur.fetchone()[0]
     print("New data inserted successfully with id: ", app_id)
@@ -66,7 +67,7 @@ def get_all_apps():
     # Get all applications from the database
     print("GETTING ALL APPLICATIONS")
     query_all_sql = """
-        SELECT ID, STATE, COMPANY, POSITION 
+        SELECT ID, STATE, COMPANY, POSITION, NOTES 
         FROM Application
     """
     try:
@@ -87,7 +88,8 @@ def get_all_apps():
             'id': data[0],
             'state': data[1],
             'company': data[2],
-            'position': data[3]
+            'position': data[3],
+            'notes': data[4]
         }
         all_apps.append(curr_app)
 
@@ -102,8 +104,8 @@ def create_app():
     new_app_data = request.json
     print(new_app_data)
     insert_sql = """
-        INSERT INTO Application (STATE, COMPANY, POSITION)
-        VALUES(%s, %s, %s) RETURNING ID AS app_id;
+        INSERT INTO Application (STATE, COMPANY, POSITION, NOTES)
+        VALUES(%s, %s, %s, %s) RETURNING ID AS app_id;
     """
     try:
         conn = psycopg2.connect(database=DB_NAME, user=DB_USER, 
@@ -113,7 +115,8 @@ def create_app():
         print("Database not connected successfully")
     
     cur = conn.cursor()
-    cur.execute(insert_sql, (new_app_data['state'], new_app_data['company'], new_app_data['position']))
+    cur.execute(insert_sql, (new_app_data['state'], new_app_data['company'], 
+        new_app_data['position'], new_app_data['notes']))
     # Get the generated id back for this application
     app_id = cur.fetchone()[0]
     print("New data inserted successfully with id: ", app_id)
@@ -135,7 +138,8 @@ def update_app(id):
         UPDATE Application
         SET STATE = %s,
             COMPANY = %s,
-            POSITION = %s
+            POSITION = %s,
+            NOTES = %s
         WHERE ID = %s
     """
     try:
@@ -146,7 +150,8 @@ def update_app(id):
         print("Database not connected successfully")
 
     cur = conn.cursor()
-    cur.execute(update_sql, (app_data['state'], app_data['company'], app_data['position'], id))
+    cur.execute(update_sql, (app_data['state'], app_data['company'], app_data['position'], 
+        app_data['notes'], id))
     print("APPLICATION WITH ID, ", id, ", SUCCESSFULLY UPDATED")
 
     conn.commit()

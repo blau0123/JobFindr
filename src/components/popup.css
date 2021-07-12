@@ -18,16 +18,21 @@
     position: absolute;
     /* Center the modal content */
     top: 20%;
-    left: 30%;
+    left: 15%;
 
-    width: 40%;
+    width: 70%;
     padding: 20px;
     border-radius: 15px;
+    overflow-y: auto;
 }
 
 .close-btn {
     float: right;
     top: 0px;
+}
+
+.form {
+    display: flex;
 }
 
 .close-btn:hover {
@@ -42,9 +47,29 @@
     margin: 30px 20px;
 }
 
+.textarea {
+    float: right;
+    width: 80%;
+    padding: 10px;
+    background-color: #cecece;
+    color: black;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+}
+
+.required-form {
+    width: 55%;
+}
+
+.optional-form {
+    width: 45%;
+    margin-left: 10px;
+}
+
 .textbox {
     float: right;
-    width: 60%;
+    width: 70%;
     padding: 10px;
     background-color: #cecece;
     color: black;
@@ -55,7 +80,7 @@
 
 .dropdown {
     float: right;
-    width: 60%;
+    width: 70%;
     padding: 10px;
     background-color: #cecece;
     border-radius: 10px;

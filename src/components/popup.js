@@ -5,6 +5,7 @@ function Popup(props) {
     const {open, createNewApp, updateData, prevAppObj, stateOptions} = props;
     const [companyText, setCompanyText] = useState(prevAppObj.company);
     const [positionText, setPositionText] = useState(prevAppObj.position);
+    const [notesText, setNotesText] = useState(prevAppObj.notes);
     const [state, setState] = useState(prevAppObj.state);
     const [showErrorMsg, setShowErrorMsg] = useState(false);
 
@@ -20,8 +21,11 @@ function Popup(props) {
         const newAppObj = {
             'state': state,
             'company': companyText,
-            'position': positionText
+            'position': positionText,
+            'notes': notesText
         };
+
+        console.log("handlesubmit", prevAppObj)
 
         // Make sure everything is filled in and not empty first
         if (companyText.replace(/\s/g, '') === '' || positionText.replace(/\s/g, '') === '') {
@@ -46,12 +50,14 @@ function Popup(props) {
     const handleChange = e => {
         e.preventDefault();
 
-        if (e.target.id == 'company-box')
+        if (e.target.id === 'company-box')
             setCompanyText(e.target.value);
-        else if (e.target.id == 'position-box')
+        else if (e.target.id === 'position-box')
             setPositionText(e.target.value);
-        else if (e.target.id == 'state-box')
+        else if (e.target.id === 'state-box')
             setState(e.target.value);
+        else if (e.target.id === 'notes-box')
+            setNotesText(e.target.value);
     }
 
     const toggleErrorMessage = evt => {
@@ -65,34 +71,43 @@ function Popup(props) {
                 <br />
                 <h3 className='title'>Add a new application</h3>
                 <div className='form'>
-                    <div className='label-input'>
-                        <label for='company-box'>Company *</label>
-                        <input id='company-box' className='textbox' type='text' 
-                            value={companyText} onChange={handleChange} /><br/>
-                    </div>
-                    <div className='label-input'>
-                        <label for='position-box'>Position *</label>
-                        <input id='position-box' className='textbox' type='text'
-                            value={positionText} onChange={handleChange} />
-                    </div>
-                    <div className='label-input'>
-                        <label for='state-box'>State *</label>
-                        <select id='state-box' className='dropdown' value={state} onChange={handleChange}>
+                    <div className='required-form'>
+                        <div className='label-input'>
+                            <label for='company-box'>Company *</label>
+                            <input id='company-box' className='textbox' type='text' 
+                                value={companyText} onChange={handleChange} /><br/>
+                        </div>
+                        <div className='label-input'>
+                            <label for='position-box'>Position *</label>
+                            <input id='position-box' className='textbox' type='text'
+                                value={positionText} onChange={handleChange} />
+                        </div>
+                        <div className='label-input'>
+                            <label for='state-box'>State *</label>
+                            <select id='state-box' className='dropdown' value={state} onChange={handleChange}>
+                                {
+                                    // Go through each state and make it an option
+                                    stateOptions !== null && stateOptions.length > 0 ? stateOptions.map(s => 
+                                        <option value={s}>{s}</option>
+                                    ) : null
+                                }
+                            </select>
+                        </div>
+                        <div className='error-msg-container'>
                             {
-                                // Go through each state and make it an option
-                                stateOptions !== null && stateOptions.length > 0 ? stateOptions.map(s => 
-                                    <option value={s}>{s}</option>
-                                ) : null
+                                showErrorMsg ? <p>Error: make sure all fields are complete</p> : null
                             }
-                        </select>
+                        </div>
+                        <div className='add-btn-container'>
+                            <button className='add-btn' onClick={handleSubmit}>Add</button>
+                        </div>
                     </div>
-                    <div className='error-msg-container'>
-                        {
-                            showErrorMsg ? <p>Error: make sure all fields are complete</p> : null
-                        }
-                    </div>
-                    <div className='add-btn-container'>
-                        <button className='add-btn' onClick={handleSubmit}>Add</button>
+                    <div className='optional-form'>
+                        <div className='label-input'>
+                            <label for='notes-box'>Notes</label>
+                            <textarea id='notes-box' className='textarea' rows='7'
+                                value={notesText} onChange={handleChange} />
+                        </div>
                     </div>
                 </div>
             </div>

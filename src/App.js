@@ -29,35 +29,32 @@ function App() {
       response => response.json().then(
         // data => console.log(data)
         data => {
-          // Organize the data into the different states
-          console.log(data)
+          // Organize the data (all apps, not organized) into the different states
           data.forEach(d => {
-            if (d.state == states[0])
+            if (d.state === states[0])
               setIntData(oldData => [...oldData, d])
-            else if (d.state == states[1])
+            else if (d.state === states[1])
               setProgData(oldData => [...oldData, d])
-            else if (d.state == states[2])
+            else if (d.state === states[2])
               setAppliedData(oldData => [...oldData, d])
-            else if (d.state == states[3])
+            else if (d.state === states[3])
               setInterviewData(oldData => [...oldData, d])
           }); 
         }))
   }, []);
 
   const togglePopup = evt => {
-    console.log(evt.target)
     setStateToAddTo(evt.target.id);
     setPopupOpen(!popupOpen);
   }
 
   const toggleEditPopup = appID => {
-    console.log("opening")
     // If closing, set the ID of the app to be shown in the popup = -1
     setPopupID(appID);
     setEditPopupOpen(!editPopupOpen);
   }
 
-  const addDateToState = (addToState, newData) => {
+  const addDataToState = (addToState, newData) => {
     switch(addToState) {
       case "Interested":
         setIntData([...intData, newData]);
@@ -71,6 +68,8 @@ function App() {
       case "Interviewing":
         setInterviewData([...interviewData, newData]);
         break;
+      default:
+        break;
     }
   }
 
@@ -83,20 +82,22 @@ function App() {
 
     switch(newState) {
       case "Interested":
-        removedList = intData.filter(item => item.id != appID)
+        removedList = intData.filter(item => item.id !== appID)
         setIntData([...removedList, newData]);
         break;
       case "In Progress":
-        removedList = progData.filter(item => item.id != appID)
+        removedList = progData.filter(item => item.id !== appID)
         setProgData([...removedList, newData]);
         break;
       case "Applied":
-        removedList = appliedData.filter(item => item.id != appID)
+        removedList = appliedData.filter(item => item.id !== appID)
         setAppliedData([...removedList, newData]);
         break;
       case "Interviewing":
-        removedList = interviewData.filter(item => item.id != appID)
+        removedList = interviewData.filter(item => item.id !== appID)
         setInterviewData([...removedList, newData]);
+        break;
+      default:
         break;
     }
 
@@ -115,25 +116,27 @@ function App() {
   }
 
   const removeEltFromState = (stateToRemoveFrom, dataToRemoveID) => {
+    console.log("Removing element with id ", dataToRemoveID);
     switch(stateToRemoveFrom) {
       case "Interested":
-        setIntData(intData.filter(item => item.id != dataToRemoveID));
+        setIntData(intData.filter(item => item.id !== dataToRemoveID));
         break;
       case "In Progress":
-        setProgData(progData.filter(item => item.id != dataToRemoveID));
+        setProgData(progData.filter(item => item.id !== dataToRemoveID));
         break;
       case "Applied":
-        setAppliedData(appliedData.filter(item => item.id != dataToRemoveID));
+        setAppliedData(appliedData.filter(item => item.id !== dataToRemoveID));
         break;
       case "Interviewing":
-        setInterviewData(interviewData.filter(item => item.id != dataToRemoveID));
+        setInterviewData(interviewData.filter(item => item.id !== dataToRemoveID));
+        break;
+      default:
         break;
     }
   }
 
   const createNewApp = newAppObj => {
-    // Add new object to the state, so can update it without a refresh
-    addDateToState(newAppObj.state, newAppObj);
+    console.log("Creating new app", newAppObj);
 
     // Create the new application in the database
     fetch('/api/v1/applications/create', {
@@ -142,7 +145,12 @@ function App() {
           'Content-Type': 'application/json'
       },
       body: JSON.stringify(newAppObj)
-    })
+    }).then(response => response.json().then(data => {
+      // Give the new id to the app
+      newAppObj.id = data.app_id;
+      // Add new object to the state, so can update it without a refresh
+      addDataToState(newAppObj.state, newAppObj);
+    }))
   }
 
   return (
@@ -155,7 +163,7 @@ function App() {
       <div className="card-holder">
         {
           states.map((s, i) => 
-            <div className='container'>
+            <div key={i} className='container'>
               <div className='card-text'>
                 {s + ' (' +
                   (s === 'Interested' ? intData.length :
@@ -167,7 +175,8 @@ function App() {
                 <button className='add-popup' id={s} onClick={togglePopup}>+</button>
                 {
                   popupOpen ? <Popup open={togglePopup} stateOptions={states} createNewApp={createNewApp}
-                                updateData={updateData} prevAppObj={{'company':'', 'position':'', 'state':stateToAddTo}}
+                                updateData={updateData} prevAppObj={{'company':'', 'position':'', 
+                                'state':stateToAddTo, 'notes': ''}}
                                 /> : null
                 }
               </div>
@@ -182,10 +191,10 @@ function App() {
                   updateData={updateData}
                   appInPopupID={appInPopupID}
                   data={
-                    s == 'Interested' && intData.length != 0 ? intData : 
-                    s == 'In Progress' && progData.length != 0 ? progData :
-                    s == 'Applied' && appliedData.length != 0 ? appliedData :
-                    s == 'Interviewing' && interviewData.length != 0 ? interviewData :
+                    s === 'Interested' && intData.length !== 0 ? intData : 
+                    s === 'In Progress' && progData.length !== 0 ? progData :
+                    s === 'Applied' && appliedData.length !== 0 ? appliedData :
+                    s === 'Interviewing' && interviewData.length !== 0 ? interviewData :
                     null
                   } />
               </div> 
